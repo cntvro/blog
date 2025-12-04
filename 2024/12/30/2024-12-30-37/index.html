@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Docker安装OpenWrt | MOMO</title><meta name="author" content="momo"><meta name="copyright" content="momo"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="**1、设置网卡混杂模式** ifconfig eno1 promisc eno1是我的物理网卡，如果不知道可以通过ifconfig查看 通过ifconfig也可以确认已经开启混杂模式（PROMISC） 2、添加macvlan类型的docker网络sudo docker network create -d macvlan  –subnet&#x3D;192.168.0.0&#x2F;24  –ga">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker安装OpenWrt">
+<meta property="og:url" content="https://001588.xyz/2024/12/30/2024-12-30-37/index.html">
+<meta property="og:site_name" content="MOMO">
+<meta property="og:description" content="**1、设置网卡混杂模式** ifconfig eno1 promisc eno1是我的物理网卡，如果不知道可以通过ifconfig查看 通过ifconfig也可以确认已经开启混杂模式（PROMISC） 2、添加macvlan类型的docker网络sudo docker network create -d macvlan  –subnet&#x3D;192.168.0.0&#x2F;24  –ga">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://001588.xyz/img/butterfly-icon.png">
+<meta property="article:published_time" content="2024-12-30T06:57:00.000Z">
+<meta property="article:modified_time" content="2025-12-04T08:49:15.765Z">
+<meta property="article:author" content="momo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://001588.xyz/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Docker安装OpenWrt",
+  "url": "https://001588.xyz/2024/12/30/2024-12-30-37/",
+  "image": "https://001588.xyz/img/butterfly-icon.png",
+  "datePublished": "2024-12-30T06:57:00.000Z",
+  "dateModified": "2025-12-04T08:49:15.765Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "momo",
+      "url": "https://001588.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://001588.xyz/2024/12/30/2024-12-30-37/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.2"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Docker安装OpenWrt',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">MOMO</span></a><a class="nav-page-title" href="/"><span class="site-name">Docker安装OpenWrt</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Docker安装OpenWrt</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-12-30T06:57:00.000Z" title="发表于 2024-12-30 14:57:00">2024-12-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-04T08:49:15.765Z" title="更新于 2025-12-04 16:49:15">2025-12-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/OpenWRT/">OpenWRT</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><!--markdown-->**1、设置网卡混杂模式**
+<p>ifconfig eno1 promisc</p>
+<p>eno1是我的物理网卡，如果不知道可以通过ifconfig查看</p>
+<p>通过ifconfig也可以确认已经开启混杂模式（PROMISC）</p>
+<p><strong>2、添加macvlan类型的docker网络</strong><br>sudo docker network create -d macvlan </p>
+<p>–subnet&#x3D;192.168.0.0&#x2F;24 </p>
+<p>–gateway&#x3D;192.168.0.1 </p>
+<p>-o parent&#x3D;eno1 openwrt_net</p>
+<p>注意：subnet、gateway要根据实际网络环境设置，我这里局域网是192.168.0.x所以设置子网</p>
+<p>192.168.0.0&#x2F;24，gateway设置为我自己主路由的地址192.168.0.1</p>
+<p><strong>3、下载镜像</strong><br>我是X86架构64位CPU，所以选择对应x86_64&#x2F;amd64的镜像，拉取镜像：</p>
+<p>sudo docker pull registry.cn-shanghai.aliyuncs.com&#x2F;suling&#x2F;openwrt:x86_64</p>
+<p><strong>4、启动镜像及network设置</strong><br>sudo docker run –restart always </p>
+<p>–name openwrt </p>
+<p>-d –network openwrt_net –privileged </p>
+<p>registry.cn-shanghai.aliyuncs.com&#x2F;suling&#x2F;openwrt:x86_64 &#x2F;sbin&#x2F;init</p>
+<p>启动后，进入容器</p>
+<p>docker exec -it openwrt &#x2F;bin&#x2F;bash</p>
+<p>如果不熟悉命令行，也可以从Portainer中进入容器</p>
+<p>然后修改网络配置文件</p>
+<p>vim &#x2F;etc&#x2F;config&#x2F;network</p>
+<p>将红色框内容根据实际情况修改为可用的IP地址：</p>
+<p>option ipaddr – 容器IP，也就是openwrt系统的地址</p>
+<p>option gateway – 设置为主路由的地址</p>
+<p>option dns – 这里先设置为一个公共的dns，这里选择了腾讯dns，根据自己喜好选择</p>
+<p>network配置文件network配置文件<br>然后重启网络服务：</p>
+<p>&#x2F;etc&#x2F;inti.d&#x2F;network restart</p>
+<p><strong>5、旁路由配置</strong><br>上面设置了ipaddr地址为192.168.0.201，从这个地址登录系统web端</p>
+<p>OpenWrt webOpenWrt web<br>初始密码为空，为了安全需要登录后重新设置</p>
+<p>要将openwrt设置为旁路由，需要三个必要配置：</p>
+<p>【网络】-【接口】-【物理设置】，将【桥接接口】选项去掉</p>
+<p>网络-接口网络-接口<br>OpenWrt in Docker: 打造旁路由，配置AdGuard，只需几步!<br>2. 【网络】-【防火墙】-【自定义规则】增加规则：</p>
+<p>iptables -t nat -I POSTROUTING -j MASQUERADE</p>
+<p>防火墙规则防火墙规则<br>检查下【网络】-【接口】-【基本配置】，是否符合本地环境，【使用自定义的 DNS 服务器】先配置为一个公共dns</p>
+<p>OpenWrt in Docker: 打造旁路由，配置AdGuard，只需几步!<br>PC端修改网关为这个旁路由的地址（移动端类似）</p>
+<p>OpenWrt in Docker: 打造旁路由，配置AdGuard，只需几步!<br>至此，Docker部署openwrt，配置为旁路由的步骤就结束了，PC通过旁路由可以正常上网。</p>
+<blockquote>
+<p>参考地址<br><a target="_blank" rel="noopener" href="https://post.smzdm.com/p/arqxqm8q/">https://post.smzdm.com/p/arqxqm8q/</a></p>
+</blockquote>
+</article><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/01/01/2025-01-01-38/" title=" docker常用命令"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2"> docker常用命令</div></div><div class="info-2"><div class="info-item-1">- `docker ps`       列出正在运行的容器  docker ps -a        查看所有容器 docker images       列出已安装的镜像 docker stop xxxx    停止 xxxx 容器 docker rm xxxx      删除 xxxx 容器 docker rmi xxxx     删除 xxxx 镜像  </div></div></div></a><a class="pagination-related" href="/2024/12/30/2024-12-30-36/" title="openwrtTTYD终端，显示已拒绝连接"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">openwrtTTYD终端，显示已拒绝连接</div></div><div class="info-2"><div class="info-item-1">1.使用puty工具连接软路由 2.编辑ttyd配置文件root@OpenWrt:&#x2F;# vi &#x2F;etc&#x2F;init.d&#x2F;ttyd按i进入编辑将下面这行代码:${interface:+-i $interface} 前加#注释掉 按esc退出编辑，输入：wq保存退出  引用文字https://www.cnblogs.com/Magiclala/p/16935165.html  </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">momo</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">快40的男人，职业：信息系统，弱电维护。爱好:摩托车/跑步/游泳/爬山/编程/科技/数码/视频拍摄,剪辑；本网站托管于github,感谢开源社区！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/04/2025xfr/" title="2025&quot;宪法宣传周&quot;海报">2025&quot;宪法宣传周&quot;海报</a><time datetime="2025-12-04T06:36:32.000Z" title="发表于 2025-12-04 14:36:32">2025-12-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/04/ybwebsite/" title="ybwebsite">ybwebsite</a><time datetime="2025-12-04T04:24:26.000Z" title="发表于 2025-12-04 12:24:26">2025-12-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/03/%E4%BD%A0%E5%A5%BD%E4%B8%96%E7%95%8C/" title="你好世界">你好世界</a><time datetime="2025-12-03T13:03:56.000Z" title="发表于 2025-12-03 21:03:56">2025-12-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/18/2025-11-18-72/" title="deepin 25安装docker ">deepin 25安装docker </a><time datetime="2025-11-17T19:00:05.000Z" title="发表于 2025-11-18 03:00:05">2025-11-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/18/2025-11-18-71/" title="deepin25 安装ssh">deepin25 安装ssh</a><time datetime="2025-11-17T18:46:19.000Z" title="发表于 2025-11-18 02:46:19">2025-11-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By momo</span><!--    if copyright.enable--><!--      - const v = copyright.version ? getVersion() : false--><!--    span.framework-info//   if owner.enable && nav
+ //  span.footer-separator |
+ //  span= _p('footer.framework') + ' '
+ //  a(href='https://hexo.io')= `Hexo${ v ? ' ' + v.hexo : '' }`
+ //  span.footer-separator |
+  // span= _p('footer.theme') + ' '
+//   a(href='https://github.com/jerryc127/hexo-theme-butterfly')= `Butterfly${ v ? ' ' + v.theme : '' }`--></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.2"></script><script src="/js/main.js?v=5.5.2"></script><div class="js-pjax"></div><script async data-pjax src="/"></script></div></body></html>
